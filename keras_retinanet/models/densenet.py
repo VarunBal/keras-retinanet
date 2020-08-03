@@ -14,9 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import keras
-from keras.applications import densenet
-from keras.utils import get_file
+import tensorflow.keras as keras
+from tensorflow.keras.applications import densenet
+from tensorflow.keras.utils import get_file
 
 from . import retinanet
 from . import Backbone
@@ -94,7 +94,7 @@ def densenet_retinanet(num_classes, backbone='densenet121', inputs=None, modifie
 
     # create the densenet backbone
     # layer_outputs contains 4 layers
-    model = keras.models.Model(inputs=inputs, outputs=layer_outputs, name=model.name)
+    model = tensorflow.keras.models.Model(inputs=inputs, outputs=layer_outputs, name=model.name)
 
     # invoke modifier if given
     if modifier:

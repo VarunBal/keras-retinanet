@@ -14,9 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import keras
-from keras.applications import mobilenet
-from keras.utils import get_file
+import tensorflow.keras as keras
+from tensorflow.keras.applications import mobilenet
+from tensorflow.keras.utils import get_file
 from ..utils.image import preprocess_image
 
 from . import retinanet
@@ -100,7 +100,7 @@ def mobilenet_retinanet(num_classes, backbone='mobilenet224_1.0', inputs=None, m
     # create the full model
     layer_names = ['conv_pw_5_relu', 'conv_pw_11_relu', 'conv_pw_13_relu']
     layer_outputs = [backbone.get_layer(name).output for name in layer_names]
-    backbone = keras.models.Model(inputs=inputs, outputs=layer_outputs, name=backbone.name)
+    backbone = tensorflow.keras.models.Model(inputs=inputs, outputs=layer_outputs, name=backbone.name)
 
     # invoke modifier if given
     if modifier:

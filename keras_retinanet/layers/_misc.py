@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import keras
+import tensorflow.keras as keras
 from .. import backend
 from ..utils import anchors as utils_anchors
 
@@ -49,7 +49,7 @@ class Anchors(keras.layers.Layer):
             self.scales  = np.array(scales)
 
         self.num_anchors = len(self.ratios) * len(self.scales)
-        self.anchors     = keras.backend.variable(utils_anchors.generate_anchors(
+        self.anchors     = tensorflow.keras.backend.variable(utils_anchors.generate_anchors(
             base_size=self.size,
             ratios=self.ratios,
             scales=self.scales,
@@ -59,14 +59,14 @@ class Anchors(keras.layers.Layer):
 
     def call(self, inputs, **kwargs):
         features = inputs
-        features_shape = keras.backend.shape(features)
+        features_shape = tensorflow.keras.backend.shape(features)
 
         # generate proposals from bbox deltas and shifted anchors
         if keras.backend.image_data_format() == 'channels_first':
             anchors = backend.shift(features_shape[2:4], self.stride, self.anchors)
         else:
             anchors = backend.shift(features_shape[1:3], self.stride, self.anchors)
-        anchors = keras.backend.tile(keras.backend.expand_dims(anchors, axis=0), (features_shape[0], 1, 1))
+        anchors = tensorflow.keras.backend.tile(tensorflow.keras.backend.expand_dims(anchors, axis=0), (features_shape[0], 1, 1))
 
         return anchors
 
@@ -99,7 +99,7 @@ class UpsampleLike(keras.layers.Layer):
 
     def call(self, inputs, **kwargs):
         source, target = inputs
-        target_shape = keras.backend.shape(target)
+        target_shape = tensorflow.keras.backend.shape(target)
         if keras.backend.image_data_format() == 'channels_first':
             source = backend.transpose(source, (0, 2, 3, 1))
             output = backend.resize_images(source, (target_shape[2], target_shape[3]), method='nearest')
@@ -167,7 +167,7 @@ class ClipBoxes(keras.layers.Layer):
     """
     def call(self, inputs, **kwargs):
         image, boxes = inputs
-        shape = keras.backend.cast(keras.backend.shape(image), keras.backend.floatx())
+        shape = tensorflow.keras.backend.cast(tensorflow.keras.backend.shape(image), tensorflow.keras.backend.floatx())
         if keras.backend.image_data_format() == 'channels_first':
             _, _, height, width = backend.unstack(shape, axis=0)
         else:
@@ -179,7 +179,7 @@ class ClipBoxes(keras.layers.Layer):
         x2 = backend.clip_by_value(x2, 0, width  - 1)
         y2 = backend.clip_by_value(y2, 0, height - 1)
 
-        return keras.backend.stack([x1, y1, x2, y2], axis=2)
+        return tensorflow.keras.backend.stack([x1, y1, x2, y2], axis=2)
 
     def compute_output_shape(self, input_shape):
         return input_shape[1]

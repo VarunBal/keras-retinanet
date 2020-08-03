@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import keras
+import tensorflow.keras as keras
 import keras_retinanet.backend
 import keras_retinanet.layers
 
@@ -30,29 +30,29 @@ class TestFilterDetections(object):
         boxes = np.array([[
             [0, 0, 10, 10],
             [0, 0, 10, 10],  # this will be suppressed
-        ]], dtype=keras.backend.floatx())
-        boxes = keras.backend.constant(boxes)
+        ]], dtype=tensorflow.keras.backend.floatx())
+        boxes = tensorflow.keras.backend.constant(boxes)
 
         classification = np.array([[
             [0, 0.9],  # this will be suppressed
             [0, 1],
-        ]], dtype=keras.backend.floatx())
-        classification = keras.backend.constant(classification)
+        ]], dtype=tensorflow.keras.backend.floatx())
+        classification = tensorflow.keras.backend.constant(classification)
 
         # compute output
         actual_boxes, actual_scores, actual_labels = filter_detections_layer.call([boxes, classification])
-        actual_boxes  = keras.backend.eval(actual_boxes)
-        actual_scores = keras.backend.eval(actual_scores)
-        actual_labels = keras.backend.eval(actual_labels)
+        actual_boxes  = tensorflow.keras.backend.eval(actual_boxes)
+        actual_scores = tensorflow.keras.backend.eval(actual_scores)
+        actual_labels = tensorflow.keras.backend.eval(actual_labels)
 
         # define expected output
-        expected_boxes = -1 * np.ones((1, 300, 4), dtype=keras.backend.floatx())
+        expected_boxes = -1 * np.ones((1, 300, 4), dtype=tensorflow.keras.backend.floatx())
         expected_boxes[0, 0, :] = [0, 0, 10, 10]
 
-        expected_scores = -1 * np.ones((1, 300), dtype=keras.backend.floatx())
+        expected_scores = -1 * np.ones((1, 300), dtype=tensorflow.keras.backend.floatx())
         expected_scores[0, 0] = 1
 
-        expected_labels = -1 * np.ones((1, 300), dtype=keras.backend.floatx())
+        expected_labels = -1 * np.ones((1, 300), dtype=tensorflow.keras.backend.floatx())
         expected_labels[0, 0] = 1
 
         # assert actual and expected are equal

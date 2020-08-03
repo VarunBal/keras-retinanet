@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import keras
+import tensorflow.keras as keras
 import keras_retinanet.backend
 import keras_retinanet.layers
 
@@ -27,17 +27,17 @@ class TestAnchors(object):
         anchors_layer = keras_retinanet.layers.Anchors(
             size=32,
             stride=8,
-            ratios=np.array([1], keras.backend.floatx()),
-            scales=np.array([1], keras.backend.floatx()),
+            ratios=np.array([1], tensorflow.keras.backend.floatx()),
+            scales=np.array([1], tensorflow.keras.backend.floatx()),
         )
 
         # create fake features input (only shape is used anyway)
-        features = np.zeros((1, 2, 2, 1024), dtype=keras.backend.floatx())
-        features = keras.backend.variable(features)
+        features = np.zeros((1, 2, 2, 1024), dtype=tensorflow.keras.backend.floatx())
+        features = tensorflow.keras.backend.variable(features)
 
         # call the Anchors layer
         anchors = anchors_layer.call(features)
-        anchors = keras.backend.eval(anchors)
+        anchors = tensorflow.keras.backend.eval(anchors)
 
         # expected anchor values
         expected = np.array([[
@@ -45,7 +45,7 @@ class TestAnchors(object):
             [-4 , -12, 28, 20],
             [-12, -4 , 20, 28],
             [-4 , -4 , 28, 28],
-        ]], dtype=keras.backend.floatx())
+        ]], dtype=tensorflow.keras.backend.floatx())
 
         # test anchor values
         np.testing.assert_array_equal(anchors, expected)
@@ -56,17 +56,17 @@ class TestAnchors(object):
         anchors_layer = keras_retinanet.layers.Anchors(
             size=32,
             stride=8,
-            ratios=np.array([1], dtype=keras.backend.floatx()),
-            scales=np.array([1], dtype=keras.backend.floatx()),
+            ratios=np.array([1], dtype=tensorflow.keras.backend.floatx()),
+            scales=np.array([1], dtype=tensorflow.keras.backend.floatx()),
         )
 
         # create fake features input with batch_size=2
-        features = np.zeros((2, 2, 2, 1024), dtype=keras.backend.floatx())
-        features = keras.backend.variable(features)
+        features = np.zeros((2, 2, 2, 1024), dtype=tensorflow.keras.backend.floatx())
+        features = tensorflow.keras.backend.variable(features)
 
         # call the Anchors layer
         anchors = anchors_layer.call(features)
-        anchors = keras.backend.eval(anchors)
+        anchors = tensorflow.keras.backend.eval(anchors)
 
         # expected anchor values
         expected = np.array([[
@@ -74,7 +74,7 @@ class TestAnchors(object):
             [-4 , -12, 28, 20],
             [-12, -4 , 20, 28],
             [-4 , -4 , 28, 28],
-        ]], dtype=keras.backend.floatx())
+        ]], dtype=tensorflow.keras.backend.floatx())
         expected = np.tile(expected, (2, 1, 1))
 
         # test anchor values
@@ -87,15 +87,15 @@ class TestUpsampleLike(object):
         upsample_like_layer = keras_retinanet.layers.UpsampleLike()
 
         # create input source
-        source   = np.zeros((1, 2, 2, 1), dtype=keras.backend.floatx())
-        source   = keras.backend.variable(source)
-        target   = np.zeros((1, 5, 5, 1), dtype=keras.backend.floatx())
+        source   = np.zeros((1, 2, 2, 1), dtype=tensorflow.keras.backend.floatx())
+        source   = tensorflow.keras.backend.variable(source)
+        target   = np.zeros((1, 5, 5, 1), dtype=tensorflow.keras.backend.floatx())
         expected = target
-        target   = keras.backend.variable(target)
+        target   = tensorflow.keras.backend.variable(target)
 
         # compute output
         actual = upsample_like_layer.call([source, target])
-        actual = keras.backend.eval(actual)
+        actual = tensorflow.keras.backend.eval(actual)
 
         np.testing.assert_array_equal(actual, expected)
 

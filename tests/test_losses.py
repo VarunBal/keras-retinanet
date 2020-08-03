@@ -1,5 +1,5 @@
 import keras_retinanet.losses
-import keras
+import tensorflow.keras as keras
 
 import numpy as np
 
@@ -14,7 +14,7 @@ def test_smooth_l1():
             [0, 0, 0, 0],
             [0, 0, 0, 0],
         ]
-    ], dtype=keras.backend.floatx())
+    ], dtype=tensorflow.keras.backend.floatx())
     regression = keras.backend.variable(regression)
 
     regression_target = np.array([

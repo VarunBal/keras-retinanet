@@ -13,6 +13,7 @@ __pycache__/
 /sdist/
 /wheels/
 /*.egg-info/
+/.idea
 .installed.cfg
 *.egg
 

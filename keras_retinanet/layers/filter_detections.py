@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import keras
+import tensorflow.keras as keras
 from .. import backend
 
 
@@ -50,21 +50,21 @@ def filter_detections(
     """
     def _filter_detections(scores, labels):
         # threshold based on score
-        indices = backend.where(keras.backend.greater(scores, score_threshold))
+        indices = backend.where(tensorflow.keras.backend.greater(scores, score_threshold))
 
         if nms:
             filtered_boxes  = backend.gather_nd(boxes, indices)
-            filtered_scores = keras.backend.gather(scores, indices)[:, 0]
+            filtered_scores = tensorflow.keras.backend.gather(scores, indices)[:, 0]
 
             # perform NMS
             nms_indices = backend.non_max_suppression(filtered_boxes, filtered_scores, max_output_size=max_detections, iou_threshold=nms_threshold)
 
             # filter indices based on NMS
-            indices = keras.backend.gather(indices, nms_indices)
+            indices = tensorflow.keras.backend.gather(indices, nms_indices)
 
         # add indices to list of all indices
         labels = backend.gather_nd(labels, indices)
-        indices = keras.backend.stack([indices[:, 0], labels], axis=1)
+        indices = tensorflow.keras.backend.stack([indices[:, 0], labels], axis=1)
 
         return indices
 
@@ -73,7 +73,7 @@ def filter_detections(
         # perform per class filtering
         for c in range(int(classification.shape[1])):
             scores = classification[:, c]
-            labels = c * backend.ones((keras.backend.shape(scores)[0],), dtype='int64')
+            labels = c * backend.ones((tensorflow.keras.backend.shape(scores)[0],), dtype='int64')
             all_indices.append(_filter_detections(scores, labels))
 
         # concatenate indices to single tensor

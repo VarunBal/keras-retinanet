@@ -21,8 +21,8 @@ import os
 import sys
 import warnings
 
-import keras
-import keras.preprocessing.image
+import tensorflow.keras as keras
+import tensorflow.keras.preprocessing.image
 import tensorflow as tf
 
 # Allow relative imports when being executed as script.
@@ -109,7 +109,7 @@ def create_models(backbone_retinanet, num_classes, weights, multi_gpu=0,
     # Keras recommends initialising a multi-gpu model on the CPU to ease weight sharing, and to prevent OOM errors.
     # optionally wrap in a parallel model
     if multi_gpu > 1:
-        from keras.utils import multi_gpu_model
+        from tensorflow.keras.utils import multi_gpu_model
         with tf.device('/cpu:0'):
             model = model_with_weights(backbone_retinanet(num_classes, num_anchors=num_anchors, modifier=modifier, pyramid_levels=pyramid_levels), weights=weights, skip_mismatch=True)
         training_model = multi_gpu_model(model, gpus=multi_gpu)
@@ -151,7 +151,7 @@ def create_callbacks(model, training_model, prediction_model, validation_generat
 
     if args.tensorboard_dir:
         makedirs(args.tensorboard_dir)
-        tensorboard_callback = keras.callbacks.TensorBoard(
+        tensorboard_callback = tensorflow.keras.callbacks.TensorBoard(
             log_dir                = args.tensorboard_dir,
             histogram_freq         = 0,
             batch_size             = args.batch_size,
@@ -178,7 +178,7 @@ def create_callbacks(model, training_model, prediction_model, validation_generat
     if args.snapshots:
         # ensure directory created first; otherwise h5py will error after epoch.
         makedirs(args.snapshot_path)
-        checkpoint = keras.callbacks.ModelCheckpoint(
+        checkpoint = tensorflow.keras.callbacks.ModelCheckpoint(
             os.path.join(
                 args.snapshot_path,
                 '{backbone}_{dataset_type}_{{epoch:02d}}.h5'.format(backbone=args.backbone, dataset_type=args.dataset_type)
@@ -191,7 +191,7 @@ def create_callbacks(model, training_model, prediction_model, validation_generat
         checkpoint = RedirectModel(checkpoint, model)
         callbacks.append(checkpoint)
 
-    callbacks.append(keras.callbacks.ReduceLROnPlateau(
+    callbacks.append(tensorflow.keras.callbacks.ReduceLROnPlateau(
         monitor    = 'loss',
         factor     = args.reduce_lr_factor,
         patience   = args.reduce_lr_patience,
@@ -203,7 +203,7 @@ def create_callbacks(model, training_model, prediction_model, validation_generat
     ))
 
     if args.evaluation and validation_generator:
-        callbacks.append(keras.callbacks.EarlyStopping(
+        callbacks.append(tensorflow.keras.callbacks.EarlyStopping(
             monitor    = 'mAP',
             patience   = 5,
             mode       = 'max',
